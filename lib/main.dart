@@ -1,5 +1,6 @@
 import 'package:firey_chat/cubit/counter_cubit.dart';
 import 'package:firey_chat/cubit/theme_cubit.dart';
+import 'package:firey_chat/home_screen.dart';
 import 'package:firey_chat/menus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,13 +37,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   late AnimationController _drawerSlideController;
   final _animationDuration = initialDelayTime + (staggerTime * menuTitles.length) + buttonDelayTime + buttonTime;
-  GlobalKey<ScaffoldState> key = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   bool valueFlag = false;
 
   @override
   void initState() {
     super.initState();
-
     _drawerSlideController = AnimationController(vsync: this, duration: const Duration(milliseconds: 150));
   }
 
@@ -50,10 +50,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   void dispose() {
     _drawerSlideController.dispose();
     super.dispose();
-  }
-
-  bool _isDrawerClosed() {
-    return _drawerSlideController.value == 0.0;
   }
 
   void _toggleDrawer() {
@@ -73,9 +69,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   PreferredSizeWidget buildAppBar() {
     return AppBar(
+      elevation: 0.0,
       title: const Text('Flutter Menu', style: TextStyle(color: Colors.black)),
       backgroundColor: Colors.transparent,
-      elevation: 0.0,
       automaticallyImplyLeading: false,
       leading: AnimatedBuilder(
         animation: _drawerSlideController,
@@ -95,39 +91,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     return AnimatedBuilder(
       animation: _drawerSlideController,
       builder: (context, child) {
-        return FractionalTranslation(
-          translation: !valueFlag ? Offset(0.0 + _drawerSlideController.value, 1.0) : Offset(1.0 - _drawerSlideController.value, 0.0),
-          child: !valueFlag
-              ? BlocBuilder<CounterCubit, CounterInitial>(
-                  builder: (context, state) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(state.counter.toString()),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              TextButton(
-                                  onPressed: () {
-                                    BlocProvider.of<CounterCubit>(context).increment();
-                                  },
-                                  child: const Text("Add")),
-                              TextButton(
-                                  onPressed: () {
-                                    BlocProvider.of<CounterCubit>(context).subtract();
-                                  },
-                                  child: const Text("Sub"))
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                )
-              : const Menu(),
-        );
+        return !valueFlag
+            ? const HomeScreen()
+            : FractionalTranslation(
+                translation: Offset(1.0 - _drawerSlideController.value, 0.0),
+                child: const Menu(),
+              );
       },
     );
   }
