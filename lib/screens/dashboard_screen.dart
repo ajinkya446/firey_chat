@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   PreferredSizeWidget buildAppBar() {
     return AppBar(
       elevation: 0.0,
-      title: const Text('Flutter Menu', style: TextStyle(color: Colors.black)),
+      title: const Text('Firey Chat', style: TextStyle(color: Colors.black, fontStyle: FontStyle.italic)),
       backgroundColor: Colors.transparent,
       automaticallyImplyLeading: false,
       leading: AnimatedBuilder(

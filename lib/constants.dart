@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 const menuTitles = [
-  'Declarative Style',
-  'Premade Widgets',
-  'Stateful Hot Reload',
-  'Native Performance',
-  'Great Community',
+  'Profile',
+  'Theme',
+  'Logout',
 ];
 
 const initialDelayTime = Duration(milliseconds: 150);

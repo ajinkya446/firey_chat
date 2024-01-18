@@ -1,3 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firey_chat/main.dart';
+import 'package:firey_chat/screens/authentication.dart';
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
@@ -10,11 +13,11 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
+  bool _isSigningIn = false;
   final _animationDuration = initialDelayTime + (staggerTime * menuTitles.length) + buttonDelayTime + buttonTime;
 
   late AnimationController _staggeredController;
   final List<Interval> _itemSlideIntervals = [];
-  late Interval _buttonInterval;
 
   @override
   void initState() {
@@ -39,13 +42,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         ),
       );
     }
-
-    final buttonStartTime = Duration(milliseconds: (menuTitles.length * 50)) + buttonDelayTime;
-    final buttonEndTime = buttonStartTime + buttonTime;
-    _buttonInterval = Interval(
-      buttonStartTime.inMilliseconds / _animationDuration.inMilliseconds,
-      buttonEndTime.inMilliseconds / _animationDuration.inMilliseconds,
-    );
   }
 
   @override
@@ -56,16 +52,18 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          _buildFlutterLogo(),
-          _buildContent(),
-        ],
-      ),
-    );
+    return _isSigningIn
+        ? const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white))
+        : Container(
+            color: Colors.white,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                _buildFlutterLogo(),
+                _buildContent(),
+              ],
+            ),
+          );
   }
 
   Widget _buildFlutterLogo() {
@@ -115,13 +113,25 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
             );
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
-            child: Text(
-              menuTitles[i],
-              textAlign: TextAlign.left,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: InkWell(
+              onTap: () async {
+                if (menuTitles[i] == "Logout") {
+                  setState(() {
+                    _isSigningIn = true;
+                  });
+                  await Authentication.signOut(context: context);
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const MyApp()));
+
+                  setState(() {
+                    _isSigningIn = false;
+                  });
+                }
+              },
+              child: Text(
+                menuTitles[i],
+                textAlign: TextAlign.left,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500, fontStyle: FontStyle.italic),
               ),
             ),
           ),
