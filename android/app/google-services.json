@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "672878074599",
+    "project_id": "firey-chat",
+    "storage_bucket": "firey-chat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672878074599:android:d4561f497fdb05edfc6042",
+        "android_client_info": {
+          "package_name": "com.ajinkya.firey_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672878074599-svpji5o5ehk8e2bph7bboqafvldsrraa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ajinkya.firey_chat",
+            "certificate_hash": "1320baa09468e05f78a11ebbbeb63b04a40a52ea"
+          }
+        },
+        {
+          "client_id": "672878074599-ocqjoollkuvto76c8sbulbpbi3a4fbfe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2WH5PDxchxFeqRvebrXP6FPTvyT9cUb0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "672878074599-ocqjoollkuvto76c8sbulbpbi3a4fbfe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

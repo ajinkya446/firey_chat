@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.firey_chat">
+    package="com.ajinkya.firey_chat">
    <application
         android:label="firey_chat"
         android:name="${applicationName}"
