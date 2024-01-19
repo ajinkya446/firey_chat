@@ -53,7 +53,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return _isSigningIn
-        ? const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white))
+        ? const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.red))
         : Container(
             color: Colors.white,
             child: Stack(

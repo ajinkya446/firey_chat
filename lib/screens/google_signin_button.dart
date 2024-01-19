@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firey_chat/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'authentication.dart';
@@ -17,7 +18,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: _isSigningIn
-          ? const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white))
+          ? const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.red))
           : OutlinedButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.white),
@@ -32,7 +33,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                 User? user = await Authentication.signInWithGoogle(context: context);
 
                 if (user != null) {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const MyHomePage()));
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const ProfileScreen()));
                 }
 
                 setState(() {

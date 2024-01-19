@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firey_chat/screens/profile_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'dashboard_screen.dart';
+
+ValueNotifier<User?> userDetails = ValueNotifier(null);
 
 class Authentication {
   static Future<FirebaseApp> initializeFirebase({required BuildContext context}) async {
@@ -13,8 +16,9 @@ class Authentication {
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
+      userDetails.value = user;
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const MyHomePage()),
+        MaterialPageRoute(builder: (context) => const ProfileScreen()),
       );
     }
 
@@ -41,6 +45,7 @@ class Authentication {
         final UserCredential userCredential = await auth.signInWithCredential(credential);
 
         user = userCredential.user;
+        userDetails.value = user;
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -79,6 +84,7 @@ class Authentication {
     try {
       if (!kIsWeb) {
         await googleSignIn.signOut();
+        // await googleSignIn.disconnect();
       }
       await FirebaseAuth.instance.signOut();
     } catch (e) {

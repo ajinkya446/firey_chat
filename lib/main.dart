@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firey_chat/cubit/counter_cubit.dart';
 import 'package:firey_chat/cubit/theme_cubit.dart';
 import 'package:firey_chat/home_screen.dart';
@@ -8,7 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'constants.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
