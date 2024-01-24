@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firey_chat/main.dart';
 import 'package:firey_chat/screens/authentication.dart';
+import 'package:firey_chat/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
@@ -72,9 +73,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
       bottom: -30,
       child: Opacity(
         opacity: 0.2,
-        child: FlutterLogo(
-          size: 400,
-        ),
+        child: FlutterLogo(size: 400),
       ),
     );
   }
@@ -126,13 +125,11 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   setState(() {
                     _isSigningIn = false;
                   });
+                } else if (menuTitles[i] == "Profile") {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfileScreen(isProfileEdit: true)));
                 }
               },
-              child: Text(
-                menuTitles[i],
-                textAlign: TextAlign.left,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500, fontStyle: FontStyle.italic),
-              ),
+              child: Text(menuTitles[i], textAlign: TextAlign.left, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
             ),
           ),
         ),

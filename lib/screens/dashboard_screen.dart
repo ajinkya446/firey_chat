@@ -100,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             bottomNavigationBar: Container(
               color: const Color(0xffb3b3ff),
               padding: const EdgeInsets.symmetric(vertical: 5),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
                 InkWell(
                   child: SizedBox(
                       height: 42,

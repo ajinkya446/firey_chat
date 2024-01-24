@@ -23,16 +23,22 @@ class Authentication {
       dynamic userValue = prefs.getString('user');
       dynamic token = prefs.getString('token');
       dynamic idToken = prefs.getString('idToken');
-      UserCredential? userCredential;
-      User? user;
-      if (userValue != null) {
-        final AuthCredential credential = GoogleAuthProvider.credential(accessToken: token, idToken: idToken);
-        userCredential = await auth.signInWithCredential(credential);
-        user = userCredential.user;
-      }
-      if (user != null && (user.email?.isNotEmpty ?? false)) {
-        userDetails.value = userCredential?.user;
-        getUserDetails(context);
+      dynamic email = prefs.getString('email');
+      if (email != null) {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const MyHomePage()));
+        return firebaseApp;
+      } else {
+        UserCredential? userCredential;
+        User? user;
+        if (userValue != null) {
+          final AuthCredential credential = GoogleAuthProvider.credential(accessToken: token, idToken: idToken);
+          userCredential = await auth.signInWithCredential(credential);
+          user = userCredential.user;
+        }
+        if (user != null && (user.email?.isNotEmpty ?? false)) {
+          userDetails.value = userCredential?.user;
+          getUserDetails(context);
+        }
       }
     } catch (e) {
       return firebaseApp;
@@ -66,7 +72,7 @@ class Authentication {
           // return;
         } else {
           if (!MySingleton().isCalled) {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const ProfileScreen()));
+            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ProfileScreen()));
             // return;
           }
         }
@@ -88,11 +94,13 @@ class Authentication {
       final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
       await prefs.setString('token', googleSignInAuthentication.accessToken.toString());
       await prefs.setString('idToken', googleSignInAuthentication.idToken.toString());
+
       final AuthCredential credential = GoogleAuthProvider.credential(accessToken: googleSignInAuthentication.accessToken, idToken: googleSignInAuthentication.idToken);
 
       try {
         final UserCredential userCredential = await auth.signInWithCredential(credential);
         await prefs.setString('user', jsonEncode(credential.toString()));
+        await prefs.setString('email', userCredential.user?.email ?? "");
         user = userCredential.user;
         userDetails.value = user;
       } on FirebaseAuthException catch (e) {

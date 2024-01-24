@@ -5,13 +5,13 @@ import 'package:firey_chat/screens/login_screen.dart';
 import 'package:firey_chat/screens/otp_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-
-import '../home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  bool? isProfileEdit;
+
+  ProfileScreen({super.key, this.isProfileEdit = false});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -20,23 +20,45 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _isSigningIn = false, isDataExists = false;
   bool? isEdited;
+  String? photoURL;
   TextEditingController nameController = TextEditingController(), emailController = TextEditingController(), phoneController = TextEditingController();
 
   @override
   void initState() {
     // TODO: implement initState
     isEdited = false;
-    nameController.text = userDetails.value?.displayName ?? "";
-    emailController.text = userDetails.value?.email ?? "";
-    setState(() {});
+
+    if ((userDetails.value?.displayName == null) || (userDetails.value?.email == null)) {
+      getUserInfo().then((value) {
+        setState(() {});
+        return;
+      });
+    } else {
+      nameController.text = userDetails.value?.displayName ?? "";
+      emailController.text = userDetails.value?.email ?? "";
+      setState(() {});
+    }
     if (userDetails.value?.phoneNumber?.isEmpty ?? false) {
-      getUserDetails();
+      getUserDetails().then((value) => setState(() {
+            if (widget.isProfileEdit ?? false) {
+              isEdited = true;
+            }
+          }));
     } else {
       phoneController.text = userDetails.value?.phoneNumber ?? "";
       if (phoneController.text.contains("+91")) {
         phoneController.text = phoneController.text.substring(3, phoneController.text.length);
+        setState(() {
+          if (widget.isProfileEdit ?? false) {
+            isEdited = true;
+          }
+        });
       } else if (phoneController.text.isEmpty) {
-        getUserDetails().then((value) => setState(() {}));
+        getUserDetails().then((value) => setState(() {
+              if (widget.isProfileEdit ?? false) {
+                isEdited = true;
+              }
+            }));
       }
     }
 
@@ -59,6 +81,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  Future getUserInfo() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    dynamic email = prefs.getString('email');
+    final details = await FirebaseFirestore.instance.collection('users').snapshots();
+    details.forEach((element) {
+      for (var elementNew in element.docs) {
+        final data = elementNew.data();
+        if (data['email'].toString().toLowerCase() == email) {
+          phoneController.text = data['phone'] ?? "";
+          emailController.text = data['email'] ?? "";
+          nameController.text = data['name'] ?? "";
+          photoURL = data['photo_url'] ?? "";
+          isEdited = true;
+          setState(() {});
+          break;
+        } else {
+          isEdited = false;
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -72,9 +116,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // height: 200,
                     child: ClipOval(
                         child: Image.network(
-                      userDetails.value?.photoURL ?? "",
+                      userDetails.value?.photoURL ?? (photoURL ?? ""),
                       errorBuilder: (ctx, object, stackTrace) {
-                        return Image.asset("asset/bonfire.png");
+                        return Image.asset("asset/bonfire.png", height: 160, fit: BoxFit.fill);
                       },
                     )),
                   ),
@@ -120,6 +164,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           setState(() {
                             _isSigningIn = true;
                           });
+                          final SharedPreferences prefs = await SharedPreferences.getInstance();
+                          await prefs.remove('email');
+                          await prefs.remove('token');
+                          await prefs.remove('idToken');
+                          await prefs.remove('user');
                           await Authentication.signOut(context: context);
                           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
 
