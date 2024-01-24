@@ -33,13 +33,13 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12.0),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12.0),
                 child: Text("Verification Code", style: TextStyle(fontSize: 22)),
               ),
-              SizedBox(height: 30),
-              Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12.0), child: Text("We texted you a code \n Please enter it below", style: TextStyle(fontSize: 18))),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
+              const Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12.0), child: Text("We texted you a code \n Please enter it below", style: TextStyle(fontSize: 18))),
+              const SizedBox(height: 30),
               OtpTextField(
                 numberOfFields: 6,
                 borderColor: const Color(0xFF512DA8),
@@ -66,7 +66,7 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen> {
                   });
                   // Sign the user in (or link) with the credential
                   await auth.signInWithCredential(credential).then((value) {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => MyHomePage()));
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const MyHomePage()));
                   });
                 }, // end onSubmit
               ),

@@ -19,15 +19,44 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _isSigningIn = false, isDataExists = false;
+  bool? isEdited;
   TextEditingController nameController = TextEditingController(), emailController = TextEditingController(), phoneController = TextEditingController();
 
   @override
   void initState() {
     // TODO: implement initState
+    isEdited = false;
     nameController.text = userDetails.value?.displayName ?? "";
     emailController.text = userDetails.value?.email ?? "";
-    phoneController.text = userDetails.value?.phoneNumber ?? "";
+    setState(() {});
+    if (userDetails.value?.phoneNumber?.isEmpty ?? false) {
+      getUserDetails();
+    } else {
+      phoneController.text = userDetails.value?.phoneNumber ?? "";
+      if (phoneController.text.contains("+91")) {
+        phoneController.text = phoneController.text.substring(3, phoneController.text.length);
+      } else if (phoneController.text.isEmpty) {
+        getUserDetails().then((value) => setState(() {}));
+      }
+    }
+
     super.initState();
+  }
+
+  Future getUserDetails() async {
+    final details = await FirebaseFirestore.instance.collection('users').snapshots();
+    details.forEach((element) {
+      for (var elementNew in element.docs) {
+        final data = elementNew.data();
+        if (data['phone'] != null && data['email'].toString().toLowerCase() == userDetails.value?.email?.toLowerCase()) {
+          phoneController.text = data['phone'] ?? "";
+          isEdited = true;
+          break;
+        } else {
+          isEdited = false;
+        }
+      }
+    });
   }
 
   @override
@@ -35,25 +64,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        // appBar: AppBar(
-        //     centerTitle: true,
-        //     backgroundColor: const Color(0xfffffff),
-        //     elevation: 0,
-        //     title: const Text("Profile Screen", style: TextStyle(color: Colors.black, fontSize: 20, fontStyle: FontStyle.italic))),
-        body: /*Stack(
-          children: [
-            Image.asset(
-              "asset/background_app.png",
-              height: double.maxFinite,
-              width: double.maxFinite,
-              fit: BoxFit.fill,
-            ),*/
-            Center(
+        body: Center(
           child: _isSigningIn
               ? SizedBox(height: 50, child: LoadingAnimationWidget.flickr(leftDotColor: Colors.red, rightDotColor: Colors.deepPurple, size: 50))
               : Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
                   Container(
-                    height: 200,
+                    // height: 200,
                     child: ClipOval(
                         child: Image.network(
                       userDetails.value?.photoURL ?? "",
@@ -67,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       width: 300,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
-                      child: TextFormField(controller: emailController, decoration: const InputDecoration(labelText: 'Enter Email', border: InputBorder.none))),
+                      child: TextFormField(readOnly: isEdited!, controller: emailController, decoration: const InputDecoration(labelText: 'Enter Email', border: InputBorder.none))),
                   const SizedBox(height: 20),
                   Container(
                       width: 300,
@@ -80,6 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
                       child: TextFormField(
+                          readOnly: isEdited!,
                           controller: phoneController,
                           maxLength: 10,
                           keyboardType: TextInputType.number,
@@ -128,8 +145,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     details.forEach((element) {
       for (var elementNew in element.docs) {
         final data = elementNew.data();
-        if (data['phone'] == phoneController.text) {
+        if (data['phone'] == phoneController.text || data['email'].toString().toLowerCase() == emailController.text.toLowerCase()) {
           isDataExists = true;
+          break;
         }
       }
     });

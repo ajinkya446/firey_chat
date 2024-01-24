@@ -45,10 +45,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: Stack(
+      /*child: Stack(
         fit: StackFit.expand,
         children: [_buildFlutterLogo(), _buildContent()],
-      ),
+      ),*/
     );
   }
 
@@ -96,25 +96,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             color: Colors.white,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(state.counter.toString()),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    TextButton(
-                        onPressed: () {
-                          BlocProvider.of<CounterCubit>(context).increment();
-                        },
-                        child: const Text("Add")),
-                    TextButton(
-                        onPressed: () {
-                          BlocProvider.of<CounterCubit>(context).subtract();
-                        },
-                        child: const Text("Sub"))
-                  ],
-                ),
-              ],
+              children: [],
             ),
           );
         },
